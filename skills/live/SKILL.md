@@ -7,7 +7,7 @@ allowed-tools:
   - Glob
   - AskUserQuestion
   - TodoWrite
-  - Bash(bash ${CLAUDE_PLUGIN_ROOT}/bin/live.sh *)
+  - Bash(live.sh *)
   - Bash(git worktree *)
   - Bash(tail *)
   - Bash(ls *)
@@ -21,12 +21,18 @@ disallowed-tools:
 Bring this project's frontend up in dev mode, hand the user a URL, and put the
 live-mode rules into the session.
 
-Every mechanical step belongs to `bin/live.sh`. This skill only decides *what*
-to start and reports the result.
+Every mechanical step belongs to `live.sh`. This skill only decides *what* to
+start and reports the result.
+
+The plugin's `bin/` is on `PATH`, so `live.sh` is called by name — never
+through a plugin-root variable. That variable is set for hooks and nowhere else;
+in a skill body it expands to nothing, and the path built from it resolves to
+`/bin/live.sh`. If `command -v live.sh` comes back empty the plugin is not
+installed: say so and stop.
 
 ## 1. Already running?
 
-    bash "${CLAUDE_PLUGIN_ROOT}/bin/live.sh" status
+    live.sh status
 
 `"active":true` means the work is done. Print the URL, the app directory and
 the log path, reprint the rules block from step 4, and stop. Never start a
@@ -34,7 +40,7 @@ second server.
 
 ## 2. What to start
 
-    bash "${CLAUDE_PLUGIN_ROOT}/bin/live.sh" detect
+    live.sh detect
 
 The output carries `candidates` (each `{dir, script, pm}`) and the remembered
 `config`.
@@ -52,7 +58,7 @@ remembered command is run verbatim, and the port still comes out of the log.
 
 ## 3. Start it
 
-    bash "${CLAUDE_PLUGIN_ROOT}/bin/live.sh" start --dir <dir> --open
+    live.sh start --dir <dir> --open
 
 In a linked worktree this first copies the missing `.env*` files from the main
 worktree and links or installs `node_modules`. That runs without asking: a

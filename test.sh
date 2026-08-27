@@ -168,6 +168,7 @@ assert_contains "$out" '"active":true' "the running session reports active"
 out="$(cd "$d" && bash "$LIVE" session-start)"
 assert_contains "$out" 'LIVE CODING SESSION ACTIVE' "session-start injects the rules"
 assert_contains "$out" 'additionalContext' "session-start speaks the hook protocol"
+assert_contains "$out" "$LIVE" "session-start carries the absolute path of the script"
 
 out="$(cd "$d" && bash "$LIVE" start --dir . --cmd 'sleep 30')"
 assert_contains "$out" '"already":true' "a second start does not spawn a second server"
@@ -180,6 +181,22 @@ if kill -0 -- -"$pgid" 2>/dev/null; then
 else
   ok "the whole process group is gone"
 fi
+
+echo
+echo "plugin wiring"
+
+# CLAUDE_PLUGIN_ROOT is set for hooks and nothing else. In a skill or command body
+# it expands to nothing, so `bash "${CLAUDE_PLUGIN_ROOT}/bin/live.sh"` runs
+# `bash /bin/live.sh`. The plugin's bin/ is on PATH — call live.sh by name there.
+stray="$(grep -rln 'CLAUDE_PLUGIN_ROOT' "$ROOT/skills" "$ROOT/commands" 2>/dev/null)"
+assert_empty "$stray" "no skill or command relies on CLAUDE_PLUGIN_ROOT"
+
+grep -q 'CLAUDE_PLUGIN_ROOT' "$ROOT/hooks/hooks.json" &&
+  ok "the hooks do use CLAUDE_PLUGIN_ROOT, where it is set" ||
+  fail "the hooks lost their CLAUDE_PLUGIN_ROOT reference"
+
+[ -x "$LIVE" ] && ok "live.sh is executable, so PATH resolution works" ||
+  fail "live.sh is not executable; PATH resolution will not find it"
 
 echo
 echo "skills"

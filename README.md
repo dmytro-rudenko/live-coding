@@ -108,6 +108,9 @@ specification is separate work through `/bazinga`.
 The skills are judgement; this script is the mechanics. It is usable on its own
 and every subcommand prints one line of JSON.
 
+Installing the plugin puts its `bin/` on `PATH`, so the script is called by bare
+name — the skills do that, and so can you.
+
     live.sh detect
     live.sh config-set --dir apps/web
     live.sh bootstrap [--dry-run]

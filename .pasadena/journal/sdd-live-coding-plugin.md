@@ -40,3 +40,4 @@ Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 - ✎ Реальна перевірка знайшла два дефекти: detect збирав .claude/worktrees/*, а pnpm відхиляє symlink'нутий node_modules (ERR_PNPM_UNSAFE_MODULES_DIR) — symlink лишився тільки для npm/yarn, сигнатуру відкату розширено.
 - 16:58 ● 78fce8b fix(live.sh): skip dot-directories in detect, never symlink node_modules for pnpm
 - 16:59 ● bf07ae3 docs(plan): tick off the executed tasks
+- 17:15 ● d3ff1d2 chore(journal): record the plan commit

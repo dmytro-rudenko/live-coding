@@ -100,7 +100,7 @@ write_config() {
   else
     rm -f "$CONFIG_CMD"
     printf '{"dir":%s,"cmd":null}\n' \
-      "$([ -n "$dir" ] && printf '"%s"' "$dir" || printf null) " >"$CONFIG"
+      "$([ -n "$dir" ] && printf '"%s"' "$dir" || printf null)" >"$CONFIG"
   fi
 }
 
@@ -362,6 +362,7 @@ cmd_status() {
 rules_block() {
   cat <<EOF
 LIVE CODING SESSION ACTIVE — $1, застосунок $2, лог $3.
+Скрипт сесії: $4
 Поки сесія активна:
 - penny не будує прототип. Ні теки docs/sdd/proto/, ні proto-сервера, ні
   decision.md. Варіанти стають послідовними ітераціями по реальному коду:
@@ -378,7 +379,8 @@ cmd_session_start() {
   state_paths
   session_alive || return 0
   local text
-  text="$(rules_block "$(jget "$SESSION" url)" "$(jget "$SESSION" dir)" "$(jget "$SESSION" log)")"
+  text="$(rules_block "$(jget "$SESSION" url)" "$(jget "$SESSION" dir)" \
+    "$(jget "$SESSION" log)" "$(cd "$(dirname "$0")" && pwd)/live.sh")"
   printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}\n' \
     "$(json_escape "$text")"
 }
