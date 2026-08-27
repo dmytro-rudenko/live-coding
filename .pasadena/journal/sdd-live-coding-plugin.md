@@ -14,12 +14,12 @@ dev-інстанс однією командою (зі скануванням pa
 завершенні сесії.
 
 ## Now
-Хвилі 1-2 виконано, `bash test.sh` зелений (25 перевірок). Перевірено на
-реальних репозиторіях: детект на beenow/verbum/webcode/new-portfolio, старт
-vite, зайнятий порт, worktree-bootstrap, group-kill. Дві знахідки вже
-виправлені й покриті тестами: dot-теки в detect і відмова pnpm від
-symlink'нутого node_modules. Далі: install плагіна через /plugin і перевірка
-хуків (SessionStart digest, SessionEnd teardown) — їх автотестом не візьмеш.
+Код готовий, `bash test.sh` зелений (29 перевірок). Три раунди дефектів
+виправлено: dot-теки в detect, відмова pnpm від symlink'нутого node_modules,
+і виклик скрипта через змінну кореня плагіна (вона порожня поза хуками —
+кожен задокументований виклик вів у /bin/live.sh). Далі лишається тільки те,
+що автотестом не візьмеш: /plugin install, /hooks, рестарт сесії, перевірка
+SessionStart-дайджесту і SessionEnd-teardown на живому фронтенді.
 Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 
 ## Timeline
@@ -41,3 +41,5 @@ Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 - 16:58 ● 78fce8b fix(live.sh): skip dot-directories in detect, never symlink node_modules for pnpm
 - 16:59 ● bf07ae3 docs(plan): tick off the executed tasks
 - 17:15 ● d3ff1d2 chore(journal): record the plan commit
+- 17:19 ● 61837ab fix(live-coding): call live.sh by name, not through the plugin-root variable
+- ✎ CLAUDE_PLUGIN_ROOT порожній у Bash-інструменті — перевірено в цій сесії; PATH натомість містить bin/ кожного плагіна, тож live.sh кличеться голим іменем. test.sh тепер стереже це в обидва боки.
