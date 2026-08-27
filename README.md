@@ -79,6 +79,12 @@ same time, while a fresh worktree still remembers which app you start.
 `clear` is deliberately absent: clearing the context is not finishing the work,
 your browser tab is still open, and `SessionStart` puts the rules straight back.
 
+Only the window that ran `/live` can trigger that teardown. The session records
+the pid of the `claude` process that started it, so a second window in the same
+worktree stays an ordinary session — no live-mode rules, and leaving it does not
+kill a server it never started. The key is the process rather than the session
+id precisely so that `/clear` keeps working.
+
 The kill goes to the process group, not the pid. `pnpm run dev` is a wrapper —
 killing it alone leaves vite orphaned and still holding the port.
 
@@ -116,7 +122,7 @@ name — the skills do that, and so can you.
     live.sh bootstrap [--dry-run]
     live.sh start --dir apps/web [--cmd "..."] [--open]
     live.sh status
-    live.sh stop
+    live.sh stop [--if-owner]
     live.sh session-start
 
 Only `git`, `sed` and `grep` are required. `node` is called for one thing —

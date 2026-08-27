@@ -31,6 +31,33 @@ state_paths() {
 
 linked_worktree() { [ -n "$GIT_DIR" ] && [ "$GIT_DIR" != "$GIT_COMMON" ]; }
 
+# Which Claude Code window we belong to. CLAUDE_PID is injected per spawn, so a
+# hook may not get it — walk up to the `claude` ancestor instead. Keyed on the
+# process rather than the session id because /clear starts a new session in the
+# same process, and the live-mode rules have to survive that.
+owner_pid() {
+  if [ -n "${CLAUDE_PID:-}" ]; then
+    printf '%s' "$CLAUDE_PID"
+    return 0
+  fi
+  local p="$PPID" comm
+  while [ -n "$p" ] && [ "$p" -gt 1 ] 2>/dev/null; do
+    comm="$(ps -o comm= -p "$p" 2>/dev/null | tr -d ' ')"
+    case "$comm" in claude*) printf '%s' "$p"; return 0 ;; esac
+    p="$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')"
+  done
+}
+
+# True when this window started the session, or when neither side can be
+# identified at all — an unidentifiable environment keeps the old behaviour
+# rather than silently losing the teardown.
+owns_session() {
+  local owner me
+  owner="$(jget "$SESSION" owner)"
+  me="$(owner_pid)"
+  [ -z "$owner" ] || [ -z "$me" ] || [ "$owner" = "$me" ]
+}
+
 jget() {
   [ -f "$1" ] || return 0
   sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\"\{0,1\}\([^\",}]*\)\"\{0,1\}.*/\1/p" "$1" | head -1
@@ -313,8 +340,8 @@ cmd_start() {
   port="${url##*:}"
 
   printf '%s' "$CMD" >"$SESSION_CMD"
-  printf '{"pgid":%s,"url":"%s","port":%s,"dir":"%s","cmd":"%s","log":"%s","started":"%s"}\n' \
-    "$PGID" "$url" "$port" "$dir" "$(json_escape "$CMD")" "$LOG" \
+  printf '{"pgid":%s,"owner":"%s","url":"%s","port":%s,"dir":"%s","cmd":"%s","log":"%s","started":"%s"}\n' \
+    "$PGID" "$(owner_pid)" "$url" "$port" "$dir" "$(json_escape "$CMD")" "$LOG" \
     "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >"$SESSION"
 
   if [ "$open" = 1 ]; then
@@ -330,6 +357,13 @@ cmd_stop() {
   state_paths
   if [ ! -f "$SESSION" ]; then
     printf '{"stopped":false,"reason":"no session"}\n'
+    return 0
+  fi
+  # The SessionEnd hook passes --if-owner: a second window in the same worktree
+  # must not tear down a server it never started. An explicit /live-stop has no
+  # such guard, because the user asked for it by name.
+  if [ "${1:-}" = "--if-owner" ] && ! owns_session; then
+    printf '{"stopped":false,"reason":"owned by another session"}\n'
     return 0
   fi
   local pgid i
@@ -378,6 +412,9 @@ EOF
 cmd_session_start() {
   state_paths
   session_alive || return 0
+  # Before /live this is an ordinary Claude Code session and must stay one, so
+  # a session another window owns injects nothing here.
+  owns_session || return 0
   local text
   text="$(rules_block "$(jget "$SESSION" url)" "$(jget "$SESSION" dir)" \
     "$(jget "$SESSION" log)" "$(cd "$(dirname "$0")" && pwd)/live.sh")"

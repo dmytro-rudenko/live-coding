@@ -88,8 +88,19 @@ verbatim, substituting the three values:
 The same block is re-injected by the `SessionStart` hook, so it survives
 `/clear` and compaction for as long as the session is alive.
 
+## Whose session it is
+
+Until `/live` is run, this is an ordinary Claude Code session and nothing above
+applies. The rules arrive only for the window that started the server: a second
+window in the same worktree sees `"active":true` from `status` but gets no rules
+injected at startup, and its exit leaves the server alone.
+
+Running `/live` in that second window is opting in — report the status and the
+rules, but do not start anything, and do not take ownership. The window that
+started the server keeps it.
+
 ## Ending it
 
-`/live-stop`, or leaving Claude Code — the `SessionEnd` hook stops the server.
-`/clear` deliberately does not: clearing the context is not finishing the work,
-and the browser tab stays open.
+`/live-stop`, or leaving Claude Code — the `SessionEnd` hook stops the server,
+but only for the window that owns it. `/clear` deliberately does not: clearing
+the context is not finishing the work, and the browser tab stays open.

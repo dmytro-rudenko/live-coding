@@ -173,8 +173,22 @@ assert_contains "$out" "$LIVE" "session-start carries the absolute path of the s
 out="$(cd "$d" && bash "$LIVE" start --dir . --cmd 'sleep 30')"
 assert_contains "$out" '"already":true' "a second start does not spawn a second server"
 
+sess="$d/.git/live/session.json"
+assert_contains "$(cat "$sess")" '"owner":"' "the session records the window that started it"
+
+# A second Claude Code window in the same worktree is an ordinary session: it
+# gets no rules, and leaving it must not kill a server it never started.
+sed -i 's/"owner":"[0-9]*"/"owner":"999999"/' "$sess"
+out="$(cd "$d" && bash "$LIVE" session-start)"
+assert_empty "$out" "another window's session injects no rules"
+out="$(cd "$d" && bash "$LIVE" stop --if-owner)"
+assert_contains "$out" 'owned by another session' "the hook refuses to stop another window's server"
+[ -f "$sess" ] && ok "the other window's session file survives" ||
+  fail "the other window's session file was deleted"
+
+# /live-stop is explicit, so it has no such guard.
 out="$(cd "$d" && bash "$LIVE" stop)"
-assert_contains "$out" '"stopped":true' "stop reports success"
+assert_contains "$out" '"stopped":true' "an explicit stop works regardless of owner"
 sleep 0.3
 if kill -0 -- -"$pgid" 2>/dev/null; then
   fail "the process group survived stop"
