@@ -118,7 +118,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 **Interfaces:**
 - Produces: `plugin.json` із `"hooks": "./hooks/hooks.json"` — шлях, який задача 5 матеріалізує.
 
-- [ ] **Крок 1: `.claude-plugin/plugin.json`**
+- [x] **Крок 1: `.claude-plugin/plugin.json`**
 
 ```json
 {
@@ -132,13 +132,13 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 }
 ```
 
-- [ ] **Крок 2: `.claude-plugin/marketplace.json`** — `name: live-coding`, той самий
+- [x] **Крок 2: `.claude-plugin/marketplace.json`** — `name: live-coding`, той самий
       owner, масив `plugins` з одним записом: `name: live-coding`, `source: "./"`,
       `version: "0.1.0"`, `license: "MIT"`, `category: "Development"`, той самий
       `description` і `keywords`.
-- [ ] **Крок 3: `.gitignore`** — рівно два рядки: `.live/` та `node_modules/`.
-- [ ] **Крок 4: `LICENSE`** — MIT, `Copyright (c) 2026 Dmytro Rudenko`.
-- [ ] **Крок 5: перевірка** — `node -e 'require("./.claude-plugin/plugin.json");require("./.claude-plugin/marketplace.json");console.log("ok")'`, очікується `ok`.
+- [x] **Крок 3: `.gitignore`** — рівно два рядки: `.live/` та `node_modules/`.
+- [x] **Крок 4: `LICENSE`** — MIT, `Copyright (c) 2026 Dmytro Rudenko`.
+- [x] **Крок 5: перевірка** — `node -e 'require("./.claude-plugin/plugin.json");require("./.claude-plugin/marketplace.json");console.log("ok")'`, очікується `ok`.
 
 ---
 
@@ -153,7 +153,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 Порядок кроків — за `amy`: тест, падіння, мінімум, проходження. `test.sh`
 пишеться один раз повністю (крок 1), далі скрипт нарощується до нього.
 
-- [ ] **Крок 1: написати `test.sh`** — хелпери `ok`/`fail`/`assert_contains`
+- [x] **Крок 1: написати `test.sh`** — хелпери `ok`/`fail`/`assert_contains`
       (як у `pasadena/hooks/journal.test.sh`), `setup_repo()` створює тимчасовий
       репозиторій із коммітом, і такі перевірки:
    1. `detect` у репо з `pnpm-lock.yaml` і `apps/web/package.json` (`scripts.dev`)
@@ -180,9 +180,9 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
    13. фронтматер скілів: для кожного `skills/*/SKILL.md` перший рядок `---`,
        є закривний `---`, `name:` збігається з іменем теки, є `description:`.
        Порожня тека `skills/` проходить перевірку вакуумно.
-- [ ] **Крок 2: подивитись, як воно падає** — `bash test.sh`, очікується
+- [x] **Крок 2: подивитись, як воно падає** — `bash test.sh`, очікується
       `FAILED:` із ненульовим числом (скрипта ще немає).
-- [ ] **Крок 3: реалізувати `bin/live.sh`.** Ключові місця, які треба зробити
+- [x] **Крок 3: реалізувати `bin/live.sh`.** Ключові місця, які треба зробити
       саме так:
 
   **Шляхи і читання стану.** Хелпери `state_paths()` (виставляє `GIT_COMMON`,
@@ -254,7 +254,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
   де контекст — дайджест плюс дослівний блок правил із Global constraints.
   Екранування — хелпер `json_escape()`: `\` → `\\`, `"` → `\"`, переводи рядка → `\n`.
 
-- [ ] **Крок 4: перевірити** — `bash test.sh`, очікується `All checks passed.`
+- [x] **Крок 4: перевірити** — `bash test.sh`, очікується `All checks passed.`
 
 ---
 
@@ -266,7 +266,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 **Interfaces:**
 - Consumes: `detect`, `config-set`, `start`, `status`, `stop` — контракт у Global constraints.
 
-- [ ] **Крок 1: `skills/live/SKILL.md`.** Фронтматер: `name: live`,
+- [x] **Крок 1: `skills/live/SKILL.md`.** Фронтматер: `name: live`,
       `description: Use when the user asks to start a live coding session, bring
       the frontend up in dev mode, run the app locally with hot reload, or check
       a running live session. Detects the dev command, bootstraps a worktree,
@@ -288,14 +288,14 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
      live-режиму з Global constraints;
    - `bootstrap` виконується без підтвердження — тека worktree без залежностей
      усе одно непрацездатна.
-- [ ] **Крок 2: `commands/live.md`** — фронтматер
+- [x] **Крок 2: `commands/live.md`** — фронтматер
       `description: Підняти dev-інстанс фронтенду і почати live coding сесію`,
       `argument-hint: [тека застосунку]`; тіло: `Use the \`live\` skill. $ARGUMENTS`.
-- [ ] **Крок 3: `commands/live-stop.md`** — `description: Зупинити dev-сервер
+- [x] **Крок 3: `commands/live-stop.md`** — `description: Зупинити dev-сервер
       поточної live-сесії`; тіло: одна інструкція виконати
       `bash "${CLAUDE_PLUGIN_ROOT}/bin/live.sh" stop` і надрукувати результат.
       Без скіла — там нема чого вирішувати.
-- [ ] **Крок 4: перевірити** — `bash test.sh` (перевірка фронтматера, п.13),
+- [x] **Крок 4: перевірити** — `bash test.sh` (перевірка фронтматера, п.13),
       очікується `All checks passed.`
 
 ---
@@ -308,7 +308,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 **Interfaces:**
 - Produces: формат `docs/live/deferred.md`, який споживають правила live-режиму.
 
-- [ ] **Крок 1: `skills/do-it/SKILL.md`.** Фронтматер: `name: do-it`,
+- [x] **Крок 1: `skills/do-it/SKILL.md`.** Фронтматер: `name: do-it`,
       `description: Use when the user hands over a list of small fixes to apply
       right now, says "just do it", or is watching the result in a browser with
       hot reload. Applies each item and reports one line per item, without tests,
@@ -339,10 +339,10 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
      `# Відкладено з live-сесій`. Перетворення його на специфікацію — окрема
      робота через `/bazinga`, і вона поза межами цього скіла;
    - скіл працює і поза live-сесією.
-- [ ] **Крок 2: `commands/do-it.md`** — `description: Застосувати список правок
+- [x] **Крок 2: `commands/do-it.md`** — `description: Застосувати список правок
       без тестів і перевірок`, `argument-hint: [список правок]`; тіло:
       `Use the \`do-it\` skill. $ARGUMENTS`.
-- [ ] **Крок 3: перевірити** — `bash test.sh`, очікується `All checks passed.`
+- [x] **Крок 3: перевірити** — `bash test.sh`, очікується `All checks passed.`
 
 ---
 
@@ -354,7 +354,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 **Interfaces:**
 - Consumes: `live.sh session-start` і `live.sh stop` — контракт у Global constraints.
 
-- [ ] **Крок 1: `hooks/hooks.json`**
+- [x] **Крок 1: `hooks/hooks.json`**
 
 ```json
 {
@@ -379,7 +379,7 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
   роботи, вкладка в браузері лишається відкритою, а `SessionStart` із тим самим
   `clear` одразу повертає правила режиму в контекст.
 
-- [ ] **Крок 2: перевірити** — `node -e 'require("./hooks/hooks.json");console.log("ok")'`, очікується `ok`.
+- [x] **Крок 2: перевірити** — `node -e 'require("./hooks/hooks.json");console.log("ok")'`, очікується `ok`.
 
 ---
 
@@ -390,14 +390,14 @@ LIVE CODING SESSION ACTIVE — <url>, застосунок <dir>, лог <log>.
 **Depends on:** Tasks 1, 2, 3, 4, 5
 **Interfaces:** —
 
-- [ ] **Крок 1: `README.md`** — встановлення
+- [x] **Крок 1: `README.md`** — встановлення
       (`/plugin marketplace add dmytro-rudenko/live-coding`, далі
       `/plugin install live-coding`), таблиця трьох команд, розділ «Що робить
       `/live`» (детект → bootstrap → старт → порт із лога → браузер), розділ
       «Стан» із таблицею двох шляхів, і — обов'язково — розділ **«Перевизначення
       pasadena»** з дослівним блоком правил. Це компенсація за те, що в
       `penny/SKILL.md` про live-режим не написано нічого.
-- [ ] **Крок 2: перевірити** — `bash test.sh`, очікується `All checks passed.`
+- [x] **Крок 2: перевірити** — `bash test.sh`, очікується `All checks passed.`
 
 ---
 
