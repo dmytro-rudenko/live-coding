@@ -1,6 +1,6 @@
 ---
 branch: sdd/live-coding-plugin
-spec: -
+spec: docs/sdd/specs/2026-08-27-live-coding-plugin.md
 plan: -
 status: in-progress
 started: 2026-08-27
@@ -14,6 +14,15 @@ dev-інстанс однією командою (зі скануванням pa
 завершенні сесії.
 
 ## Now
-Shaping. Класифікація: architectural. Питання до користувача ще тривають.
+Shaping завершено. Специфікація написана й закомічена:
+docs/sdd/specs/2026-08-27-live-coding-plugin.md. Чекаємо на затвердження
+користувача, далі — leonard (план). Віддаленого репозиторію ще немає, тому
+draft PR не створено.
 
 ## Timeline
+
+### 2026-08-27
+- 15:12 ● 9c9a675 chore(journal): start live-coding plugin
+
+### 2026-08-27
+- ✎ Спека узгоджена: самодостатній плагін, стан у .git/, перевизначення penny через контекст із SessionStart-хука.
