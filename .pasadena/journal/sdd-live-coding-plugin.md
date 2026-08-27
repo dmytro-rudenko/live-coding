@@ -26,3 +26,4 @@ draft PR не створено.
 
 ### 2026-08-27
 - ✎ Спека узгоджена: самодостатній плагін, стан у .git/, перевизначення penny через контекст із SessionStart-хука.
+- 15:36 ● 10ced87 docs(spec): live-coding plugin design
