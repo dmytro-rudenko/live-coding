@@ -44,3 +44,4 @@ Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 - 17:19 ● 61837ab fix(live-coding): call live.sh by name, not through the plugin-root variable
 - ✎ CLAUDE_PLUGIN_ROOT порожній у Bash-інструменті — перевірено в цій сесії; PATH натомість містить bin/ кожного плагіна, тож live.sh кличеться голим іменем. test.sh тепер стереже це в обидва боки.
 - 17:20 ● fb561e4 chore(journal): record the plugin wiring fix
+- 17:42 ● 158cf1c fix(live-coding): a session belongs to the window that started it
