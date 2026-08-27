@@ -1,0 +1,20 @@
+{
+  "name": "live-coding",
+  "description": "Live frontend coding sessions: one command brings the dev server up with worktree bootstrap, edits land straight in the running app, and the session tears it down on exit",
+  "version": "0.1.0",
+  "hooks": "./hooks/hooks.json",
+  "author": {
+    "name": "dmytro-rudenko",
+    "email": "ph.dmitry.rudenko@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "frontend",
+    "dev-server",
+    "hot-reload",
+    "worktree",
+    "hooks",
+    "live-coding"
+  ]
+}
