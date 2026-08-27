@@ -1,0 +1,27 @@
+{
+  "name": "live-coding",
+  "description": "live-coding — bring the frontend up, edit it live, tear it down on exit",
+  "owner": {
+    "name": "dmytro-rudenko",
+    "email": "ph.dmitry.rudenko@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "live-coding",
+      "source": "./",
+      "version": "0.1.0",
+      "license": "MIT",
+      "description": "Live frontend coding sessions: one command brings the dev server up with worktree bootstrap, edits land straight in the running app, and the session tears it down on exit",
+      "category": "Development",
+      "keywords": [
+        "claude-code",
+        "frontend",
+        "dev-server",
+        "hot-reload",
+        "worktree",
+        "hooks",
+        "live-coding"
+      ]
+    }
+  ]
+}

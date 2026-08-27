@@ -33,3 +33,4 @@ Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 - 15:45 ● 0aa8b78 docs(spec): live-coding plugin design
 - 15:45 ● e36f5f2 chore(journal): record spec commit
 - ✎ План затверджено: 6 задач у 2 хвилі, контракт bin/live.sh зафіксовано в Global constraints, тому скіли й хуки не чекають на скрипт.
+- 16:49 ● 511d33d docs(plan): live-coding implementation plan
