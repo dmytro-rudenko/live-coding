@@ -4,7 +4,7 @@
 set -uo pipefail
 
 URL_RE='https?://(localhost|127\.0\.0\.1|\[::1\]):[0-9]+'
-MISSING_DEPS_RE='Cannot find (module|package)|command not found|ERR_MODULE_NOT_FOUND'
+DEPS_BROKEN_RE='Cannot find (module|package)|command not found|ERR_MODULE_NOT_FOUND|UNSAFE_MODULES_DIR'
 
 state_paths() {
   if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -111,7 +111,7 @@ cmd_detect() {
   cands="$(node -e '
 const fs = require("fs"), path = require("path");
 const root = process.argv[1], pm = process.argv[2];
-const skip = new Set(["node_modules", ".git", "dist", "build", ".next", ".output", ".turbo", "coverage"]);
+const skip = new Set(["node_modules", "dist", "build", "coverage", "vendor", "tmp"]);
 const order = ["dev", "start:dev", "serve"];
 const out = [];
 function walk(dir, depth) {
@@ -125,7 +125,9 @@ function walk(dir, depth) {
     } catch { }
   }
   if (depth >= 3) return;
-  for (const e of ents) if (e.isDirectory() && !skip.has(e.name)) walk(path.join(dir, e.name), depth + 1);
+  for (const e of ents)
+    if (e.isDirectory() && !e.name.startsWith(".") && !skip.has(e.name))
+      walk(path.join(dir, e.name), depth + 1);
 }
 walk(root, 0);
 process.stdout.write(JSON.stringify(out));
@@ -201,7 +203,8 @@ cmd_bootstrap() {
   lock="$(lockfile_name "$pm")"
   if [ -e "$ROOT/node_modules" ]; then
     deps=present
-  elif [ -d "$main/node_modules" ] && cmp -s "$main/$lock" "$ROOT/$lock"; then
+  elif [[ "$pm" == npm || "$pm" == yarn ]] &&
+    [ -d "$main/node_modules" ] && cmp -s "$main/$lock" "$ROOT/$lock"; then
     deps=symlink
     [ "$dry" = 0 ] && link_node_modules "$main"
   else
@@ -278,7 +281,7 @@ cmd_start() {
   for i in $(seq 1 300); do
     url="$(grep -aoEm1 "$URL_RE" "$LOG" 2>/dev/null)"
     [ -n "$url" ] && break
-    if grep -qaE "$MISSING_DEPS_RE" "$LOG" 2>/dev/null; then
+    if grep -qaE "$DEPS_BROKEN_RE" "$LOG" 2>/dev/null; then
       if [ "$retried" = 0 ] && [ -L "$ROOT/node_modules" ]; then
         kill -- -"$PGID" 2>/dev/null
         unlink_node_modules

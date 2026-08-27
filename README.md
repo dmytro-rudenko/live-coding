@@ -26,7 +26,9 @@ digest and the automatic teardown work.
 ## What `/live` does
 
 1. **Detect.** Walks the repo three levels deep for a `package.json` with a
-   `dev`, `start:dev` or `serve` script. The package manager comes from the
+   `dev`, `start:dev` or `serve` script, skipping `node_modules`, build output
+   and every dot-directory — that last one is what keeps `.claude/worktrees/*`
+   out of the list. The package manager comes from the
    lockfile — `pnpm-lock.yaml`, `yarn.lock`, `bun.lock*`, `package-lock.json` —
    then from `packageManager`, then npm.
 
@@ -36,10 +38,17 @@ digest and the automatic teardown work.
    `make dev` work without any Node-specific support.
 
 2. **Bootstrap, in a linked worktree only.** Copies the missing `.env*` files
-   from the main worktree. If `node_modules` is absent and the lockfiles are
-   byte-identical, symlinks the main worktree's; otherwise installs. If the
-   symlink turns out to be wrong — `Cannot find module` in the log — it is torn
-   down, a full install runs, and the server is restarted once.
+   from the main worktree. If `node_modules` is absent, **npm and yarn** get a
+   symlink to the main worktree's — but only when the lockfiles are
+   byte-identical. Everything else installs.
+
+   pnpm and bun never get one: pnpm checks the dependency state on `run`, sees a
+   modules directory resolving outside the project root, and refuses with
+   `ERR_PNPM_UNSAFE_MODULES_DIR` before starting anything. It costs little —
+   pnpm hard-links from its global store, so installing into a worktree is fast.
+
+   If a symlink turns out to be wrong anyway, the log gives it away, the links
+   are torn down, a full install runs, and the server restarts once.
 
 3. **Start.** `setsid` puts the server in its own process group, and the port
    is read from the log rather than assumed from the framework's default: when

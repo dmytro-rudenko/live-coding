@@ -83,6 +83,16 @@ d="$(mk)"
 out="$(cd "$d" && bash "$LIVE" detect)"
 assert_contains "$out" '"candidates":[]' "no dev script, no candidates"
 
+d="$(setup_repo)"
+mkdir -p "$d/.claude/worktrees/other"
+printf '{"name":"other","scripts":{"dev":"vite"}}\n' >"$d/.claude/worktrees/other/package.json"
+out="$(cd "$d" && bash "$LIVE" detect)"
+if [[ "$out" == *".claude/worktrees"* ]]; then
+  fail "dot-directories are scanned; a repo full of worktrees drowns the list"
+else
+  ok "dot-directories are skipped, worktrees included"
+fi
+
 echo
 echo "config"
 
@@ -112,20 +122,34 @@ d="$(setup_repo)"
 out="$(cd "$d" && bash "$LIVE" bootstrap --dry-run)"
 assert_contains "$out" '"linked":false' "the main worktree needs no bootstrap"
 
-d="$(setup_repo)"
+mkwt() {
+  local d="$1" wt
+  wt="$(mktemp -d)/wt"
+  tmpdirs+=("$(dirname "$wt")")
+  git -C "$d" worktree add -q -b "feat-$RANDOM" "$wt" 2>/dev/null
+  printf '%s' "$wt"
+}
+
+d="$(setup_repo package-lock.json)"
 printf 'A=1\n' >"$d/.env"
 mkdir -p "$d/node_modules"
-wt="$d/../wt-$$"
-git -C "$d" worktree add -q -b feat "$wt" 2>/dev/null
-tmpdirs+=("$wt")
+wt="$(mkwt "$d")"
 out="$(cd "$wt" && bash "$LIVE" bootstrap --dry-run)"
 assert_contains "$out" '"linked":true' "a linked worktree is detected"
 assert_contains "$out" '".env"' "the missing .env is listed for copying"
-assert_contains "$out" '"deps":"symlink"' "identical lockfiles allow the symlink"
+assert_contains "$out" '"deps":"symlink"' "npm with identical lockfiles allows the symlink"
 
-printf 'changed\n' >"$wt/pnpm-lock.yaml"
+printf 'changed\n' >"$wt/package-lock.json"
 out="$(cd "$wt" && bash "$LIVE" bootstrap --dry-run)"
 assert_contains "$out" '"deps":"install"' "a diverged lockfile forces a full install"
+
+# pnpm refuses a modules dir whose target is outside the project root
+# (ERR_PNPM_UNSAFE_MODULES_DIR), so it never gets a symlink.
+d="$(setup_repo pnpm-lock.yaml)"
+mkdir -p "$d/node_modules"
+wt="$(mkwt "$d")"
+out="$(cd "$wt" && bash "$LIVE" bootstrap --dry-run)"
+assert_contains "$out" '"deps":"install"' "pnpm installs instead of symlinking"
 
 echo
 echo "start and stop"

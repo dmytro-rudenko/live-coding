@@ -14,10 +14,12 @@ dev-інстанс однією командою (зі скануванням pa
 завершенні сесії.
 
 ## Now
-Building. План затверджено: docs/sdd/plans/2026-08-27-live-coding-plugin.md.
-Хвиля 1 — задачі 1-5 (маніфести, bin/live.sh+test.sh, скіл live, скіл do-it,
-хуки), хвиля 2 — README. Виконую послідовно сам, без субагентів.
-Перевірка: `bash test.sh` -> `All checks passed.`
+Хвилі 1-2 виконано, `bash test.sh` зелений (25 перевірок). Перевірено на
+реальних репозиторіях: детект на beenow/verbum/webcode/new-portfolio, старт
+vite, зайнятий порт, worktree-bootstrap, group-kill. Дві знахідки вже
+виправлені й покриті тестами: dot-теки в detect і відмова pnpm від
+symlink'нутого node_modules. Далі: install плагіна через /plugin і перевірка
+хуків (SessionStart digest, SessionEnd teardown) — їх автотестом не візьмеш.
 Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 
 ## Timeline
@@ -34,3 +36,5 @@ Draft PR #1: https://github.com/dmytro-rudenko/live-coding/pull/1
 - 15:45 ● e36f5f2 chore(journal): record spec commit
 - ✎ План затверджено: 6 задач у 2 хвилі, контракт bin/live.sh зафіксовано в Global constraints, тому скіли й хуки не чекають на скрипт.
 - 16:49 ● 511d33d docs(plan): live-coding implementation plan
+- 16:55 ● 41598c8 feat(live-coding): plugin skeleton, live.sh, skills, hooks
+- ✎ Реальна перевірка знайшла два дефекти: detect збирав .claude/worktrees/*, а pnpm відхиляє symlink'нутий node_modules (ERR_PNPM_UNSAFE_MODULES_DIR) — symlink лишився тільки для npm/yarn, сигнатуру відкату розширено.
