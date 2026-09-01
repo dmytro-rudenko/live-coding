@@ -9,7 +9,7 @@
     {
       "name": "live-coding",
       "source": "./",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "license": "MIT",
       "description": "Live frontend coding sessions: one command brings the dev server up with worktree bootstrap, edits land straight in the running app, and the session tears it down on exit",
       "category": "Development",
