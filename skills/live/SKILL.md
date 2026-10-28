@@ -1,6 +1,7 @@
 ---
 name: live
 description: Use when the user asks to start a live coding session, bring the frontend up in dev mode, run the app locally with hot reload, or check a running live session. Detects the dev command, bootstraps a worktree, starts the server and opens the browser
+argument-hint: [тека застосунку]
 allowed-tools:
   - Read
   - Grep
