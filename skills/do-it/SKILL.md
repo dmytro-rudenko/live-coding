@@ -1,6 +1,7 @@
 ---
 name: do-it
 description: Use when the user hands over a list of small fixes to apply right now, says "just do it", or is watching the result in a browser with hot reload. Applies each item and reports one line per item, without tests, browser checks or commits
+argument-hint: [список правок]
 allowed-tools:
   - Read
   - Grep
